@@ -1,0 +1,12 @@
+django
+celery
+redis
+gunicorn
+djangorestframework
+requests
+drf-yasg
+whitenoise
+django-celery-beat
+django-redis
+python-dotenv
+psycopg2-binary==2.9.9
