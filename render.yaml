@@ -2,35 +2,44 @@ services:
   - type: web
     name: django
     env: docker
-    plan: free
+    repo: https://github.com/yourusername/yourrepo
+    region: oregon
+    branch: main
     dockerfilePath: ./Dockerfile
-    buildCommand: ""
-    startCommand: gunicorn webhook.wsgi:application --bind 0.0.0.0:8000
+    autoDeploy: true
     envVars:
-      - fromGroup: webhook-env
+      - fromGroup: django-env
+    ports:
+      - 8000
+    plan: free
+    healthCheckPath: /
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: Allow all IPs
 
   - type: worker
-    name: celery-worker
+    name: celery
     env: docker
-    plan: free
+    repo: https://github.com/yourusername/yourrepo
+    region: oregon
+    branch: main
     dockerfilePath: ./Dockerfile
-    buildCommand: ""
-    startCommand: celery -A webhook worker --loglevel=info
+    autoDeploy: true
     envVars:
-      - fromGroup: webhook-env
+      - fromGroup: django-env
 
   - type: worker
     name: celery-beat
     env: docker
-    plan: free
+    repo: https://github.com/yourusername/yourrepo
+    region: oregon
+    branch: main
     dockerfilePath: ./Dockerfile
-    buildCommand: ""
-    startCommand: celery -A webhook beat --loglevel=info
+    autoDeploy: true
     envVars:
-      - fromGroup: webhook-env
+      - fromGroup: django-env
 
   - type: redis
     name: redis
-    ipAllowList:
-      - source: 0.0.0.0/0
-        description: Allow all (for dev/testing)
+    region: oregon
+    plan: free
