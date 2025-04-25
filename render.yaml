@@ -1,31 +1,36 @@
 services:
   - type: web
-    name: webhook-backend
+    name: django
     env: docker
     plan: free
+    dockerfilePath: ./Dockerfile
     buildCommand: ""
     startCommand: gunicorn webhook.wsgi:application --bind 0.0.0.0:8000
     envVars:
-      - fromDotEnv: true
+      - fromGroup: webhook-env
 
   - type: worker
     name: celery-worker
     env: docker
     plan: free
+    dockerfilePath: ./Dockerfile
     buildCommand: ""
     startCommand: celery -A webhook worker --loglevel=info
     envVars:
-      - fromDotEnv: true
+      - fromGroup: webhook-env
 
   - type: worker
     name: celery-beat
     env: docker
     plan: free
+    dockerfilePath: ./Dockerfile
     buildCommand: ""
     startCommand: celery -A webhook beat --loglevel=info
     envVars:
-      - fromDotEnv: true
+      - fromGroup: webhook-env
 
   - type: redis
     name: redis
-    plan: free
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: Allow all (for dev/testing)
