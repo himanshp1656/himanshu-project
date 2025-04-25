@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: webhook-backend
+    env: docker
+    plan: free
+    buildCommand: ""
+    startCommand: gunicorn webhook.wsgi:application --bind 0.0.0.0:8000
+    envVars:
+      - fromDotEnv: true
+
+  - type: worker
+    name: celery-worker
+    env: docker
+    plan: free
+    buildCommand: ""
+    startCommand: celery -A webhook worker --loglevel=info
+    envVars:
+      - fromDotEnv: true
+
+  - type: worker
+    name: celery-beat
+    env: docker
+    plan: free
+    buildCommand: ""
+    startCommand: celery -A webhook beat --loglevel=info
+    envVars:
+      - fromDotEnv: true
+
+  - type: redis
+    name: redis
+    plan: free
